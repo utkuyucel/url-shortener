@@ -94,5 +94,42 @@ To shorten a URL via the command-line tool:
    Short URL: http://127.0.0.1:8000/u/abc123
    ```
 
+## Advanced System Design
+
+### Architecture Overview
+
+The URL Shortener is structured as a modular, layered system:
+- **API Layer (FastAPI):** Handles HTTP requests, routing, and OpenAPI docs.
+- **Service Layer:** Business logic in `app/services/url_service.py` for generating, retrieving, and updating URLs.
+- **Data Access Layer (DuckDB):** Persists URL mappings and visit counts via `app/db/session.py`.
+- **CLI Client:** `shorten.py` enables command-line usage.
+- **Configuration:** Environment variables managed in `app/core/config.py`.
+
+### Data Flow
+
+1. **Shorten Request:** Client calls `/url` → Service generates a unique key → Stores mapping in DuckDB → Returns shortened URL.
+2. **Redirect Request:** Client visits `/u/{key}` → Service fetches original URL, increments count → Issues HTTP 307 redirect.
+3. **Metadata Retrieval:** Client calls `/url/{key}` → API returns URL details from DuckDB.
+
+### Scalability and Performance
+
+- **Stateless API Servers:** Horizontally scalable behind a load balancer.
+- **Persistent Storage:** DuckDB for single-node efficiency; switch to distributed DB (PostgreSQL, Cassandra) for high throughput.
+- **Caching Layer (Future):** Integrate Redis for hot-URL caching and rate limiting.
+- **Asynchronous I/O:** Utilize FastAPI’s async support for non-blocking operations.
+
+### Database Schema
+
+| Table    | Columns                              | Description               |
+|----------|--------------------------------------|---------------------------|
+| `urls`   | `key`, `original_url`, `created_at`  | Stores URL mappings       |
+| `visits` | `key`, `count`                       | Tracks visit counts       |
+
+### Extensibility
+
+- Add user authentication for user-specific links.
+- Support custom aliases and expiration policies.
+- Deploy on Kubernetes for zero-downtime scaling.
+
 ## License
 This project is licensed under the MIT License.
