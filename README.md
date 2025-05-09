@@ -1,6 +1,6 @@
 # URL Shortener
 
-A professional FastAPI-based URL shortener with DuckDB persistence.
+A FastAPI-based URL shortener with DuckDB persistence.
 
 ## Features
 - Shorten any HTTP/HTTPS URL
