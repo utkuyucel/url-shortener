@@ -94,7 +94,7 @@ To shorten a URL via the command-line tool:
    Short URL: http://127.0.0.1:8000/u/abc123
    ```
 
-## Advanced System Design
+## System Design
 
 ### Architecture Overview
 
