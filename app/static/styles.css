@@ -1,0 +1,228 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    background-color: #f0f2f5;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.main-container {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.pane {
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.left-pane {
+    flex: 1;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.right-pane {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+}
+
+.left-pane h1 {
+    color: #1a73e8;
+    margin-bottom: 25px;
+    font-size: 2em;
+    text-align: center;
+}
+
+.left-pane form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.left-pane input[type="url"] {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+}
+
+.left-pane input[type="url"]:focus {
+    border-color: #1a73e8;
+    outline: none;
+}
+
+.left-pane button {
+    padding: 12px 20px;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+}
+
+.left-pane button:hover {
+    background-color: #1558b0;
+}
+
+.left-pane #result, .left-pane #error {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.left-pane #result {
+    background-color: #e6f4ea;
+    border: 1px solid #c8e6c9;
+    text-align: center;
+}
+
+.left-pane #result p {
+    margin: 0 0 10px 0;
+    font-weight: bold;
+}
+
+.left-pane #result a {
+    color: #1a73e8;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.left-pane #result a:hover {
+    text-decoration: underline;
+}
+
+.left-pane #result button {
+    background-color: #4CAF50;
+    margin-top: 10px;
+    width: auto;
+    padding: 8px 15px;
+}
+
+.left-pane #result button:hover {
+    background-color: #45a049;
+}
+
+.left-pane #error {
+    background-color: #fdecea;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    text-align: center;
+}
+
+.hidden {
+    display: none;
+}
+
+.right-pane #previousUrlsSection {
+    width: 100%;
+}
+
+.right-pane #previousUrlsSection h2 {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 0;
+    text-align: left;
+}
+
+.previous-urls-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+button.danger-button {
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button.danger-button:hover {
+    background-color: #c82333;
+}
+
+.right-pane .table-container {
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.right-pane #previousUrlsTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#previousUrlsTable th, #previousUrlsTable td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+}
+
+#previousUrlsTable th {
+    background-color: #f0f2f5;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+th.sortable-header {
+    cursor: pointer;
+}
+
+th.sortable-header:hover {
+    background-color: #e0e2e5;
+}
+
+#sortIndicator {
+    font-size: 0.8em;
+    margin-left: 4px;
+}
+
+#previousUrlsTable td a {
+    text-decoration: none;
+    color: #1a73e8;
+    word-break: break-all;
+}
+
+#previousUrlsTable td a:hover {
+    text-decoration: underline;
+}
+
+#previousUrlsTable tbody tr:last-child td {
+    border-bottom: none;
+}
+
+#previousUrlsTable tbody tr:hover {
+    background-color: #f9f9f9;
+}

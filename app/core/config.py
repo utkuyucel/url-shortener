@@ -1,19 +1,19 @@
 from typing import Dict, Optional
 from pydantic import BaseSettings, validator
 
-
 class Settings(BaseSettings):
     database_url: str = ""
     host: str = "127.0.0.1"
     port: int = 8000
-    base_url: Optional[str] = None  # type: ignore[assignment]
+    base_url: Optional[str] = None
     
     # Rate limiting configuration
     rate_limit_enabled: bool = True
-    rate_limit_storage_uri: Optional[str] = None  # Redis connection string
+    rate_limit_storage_uri: Optional[str] = None
     rate_limit_default_limits: Dict[str, str] = {
         "create_url": "30/minute",
-        "redirect_url": "100/minute", 
+        "redirect_url": "100/minute",
+        "delete_url": "5/minute",
         "general": "100/minute",
     }
     rate_limit_key_prefix: str = "url_shortener_ratelimit"
@@ -28,5 +28,4 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
 
-
-settings = Settings()  # type: ignore
+settings = Settings()

@@ -3,7 +3,7 @@ import secrets
 from contextlib import contextmanager
 from app.db.session import get_db
 from app.schemas.url import UrlCreate, UrlInfo
-from typing import Optional
+from typing import Optional, List
 
 ALPHABET = string.ascii_letters + string.digits
 SHORT_LENGTH = 6
@@ -62,3 +62,24 @@ def increment_visit(short_path: str):
             "UPDATE urls SET visit_count = visit_count + 1 WHERE short_path = ?",
             (short_path,)
         )
+
+def get_all_urls(limit: int = 50) -> List[UrlInfo]:
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT original_url, short_path, created_at, visit_count FROM urls ORDER BY created_at DESC LIMIT ?",
+            (limit,)
+        ).fetchall()
+    return [
+        UrlInfo(
+            id=0,
+            original_url=row[0],
+            short_path=row[1],
+            created_at=row[2],
+            visit_count=row[3],
+        )
+        for row in rows
+    ]
+
+def delete_all_urls():
+    with get_db() as conn:
+        conn.execute("DELETE FROM urls")

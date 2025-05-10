@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="main-container">
+        <div class="pane left-pane">
+            <h1>URL Shortener</h1>
+            <form id="shortenForm">
+                <input type="url" id="originalUrl" placeholder="Enter URL to shorten" required>
+                <button type="submit">Shorten</button>
+            </form>
+            <div id="result" class="hidden">
+                <p>Shortened URL:</p>
+                <a href="" id="shortenedUrl" target="_blank"></a>
+                <button id="copyButton">Copy</button>
+            </div>
+            <div id="error" class="hidden">
+                <p>Error: <span id="errorMessage"></span></p>
+            </div>
+        </div>
+        <div class="pane right-pane">
+            <div id="previousUrlsSection" class="hidden">
+                <div class="previous-urls-header">
+                    <h2>Previously Shortened URLs (Last 50)</h2>
+                    <button id="deleteAllButton" class="danger-button">Delete All Links</button>
+                </div>
+                <div class="table-container">
+                    <table id="previousUrlsTable">
+                        <thead>
+                            <tr>
+                                <th>Original URL</th>
+                                <th>Shortened URL</th>
+                                <th id="clickCountHeader" class="sortable-header">Click Count <span id="sortIndicator"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="previousUrlsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const shortenForm = document.getElementById('shortenForm');
+        const originalUrlInput = document.getElementById('originalUrl');
+        const resultDiv = document.getElementById('result');
+        const errorDiv = document.getElementById('error');
+        const shortenedUrlLink = document.getElementById('shortenedUrl');
+        const errorMessageSpan = document.getElementById('errorMessage');
+        const previousUrlsSection = document.getElementById('previousUrlsSection');
+        const previousUrlsTableBody = document.getElementById('previousUrlsTableBody');
+        const deleteAllButton = document.getElementById('deleteAllButton');
+        const clickCountHeader = document.getElementById('clickCountHeader');
+        const sortIndicator = document.getElementById('sortIndicator');
+
+        let currentUrls = [];
+        let sortOrder = 'desc';
+
+        function renderTable(urlsToRender) {
+            previousUrlsTableBody.innerHTML = '';
+            if (urlsToRender.length > 0) {
+                urlsToRender.forEach(url => {
+                    const row = previousUrlsTableBody.insertRow();
+                    
+                    const originalUrlCell = row.insertCell();
+                    const originalLink = document.createElement('a');
+                    originalLink.href = url.original_url;
+                    originalLink.textContent = url.original_url.length > 50 ? url.original_url.substring(0, 50) + '...' : url.original_url;
+                    originalLink.title = url.original_url;
+                    originalLink.target = '_blank';
+                    originalUrlCell.appendChild(originalLink);
+
+                    const shortenedUrlCell = row.insertCell();
+                    const shortLink = document.createElement('a');
+                    const fullShortUrl = window.location.origin + '/' + url.short_path;
+                    shortLink.href = fullShortUrl;
+                    shortLink.textContent = fullShortUrl;
+                    shortLink.target = '_blank';
+                    shortenedUrlCell.appendChild(shortLink);
+                    
+                    const clickCountCell = row.insertCell();
+                    clickCountCell.textContent = url.visit_count;
+                });
+                previousUrlsSection.classList.remove('hidden');
+            } else {
+                previousUrlsSection.classList.add('hidden');
+            }
+        }
+
+        async function fetchPreviousUrls() {
+            try {
+                const response = await fetch('/api/v1/urls');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch previous URLs');
+                }
+                currentUrls = await response.json();
+                sortUrls();
+            } catch (error) {
+                console.error('Error fetching previous URLs:', error);
+                previousUrlsSection.classList.add('hidden');
+            }
+        }
+
+        function sortUrls() {
+            currentUrls.sort((a, b) => {
+                if (sortOrder === 'asc') {
+                    return a.visit_count - b.visit_count;
+                } else {
+                    return b.visit_count - a.visit_count;
+                }
+            });
+            renderTable(currentUrls);
+            updateSortIndicator();
+        }
+        
+        function updateSortIndicator() {
+            if (sortOrder === 'asc') {
+                sortIndicator.textContent = ' ▲';
+            } else {
+                sortIndicator.textContent = ' ▼';
+            }
+        }
+
+        clickCountHeader.addEventListener('click', function() {
+            sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+            sortUrls();
+        });
+
+        shortenForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const originalUrl = originalUrlInput.value;
+            resultDiv.classList.add('hidden');
+            errorDiv.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/v1/url/shorten', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ original_url: originalUrl }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Failed to shorten URL');
+                }
+
+                const data = await response.json();
+                const fullShortenedUrl = window.location.origin + '/' + data.short_path;
+                shortenedUrlLink.href = fullShortenedUrl;
+                shortenedUrlLink.textContent = fullShortenedUrl;
+                resultDiv.classList.remove('hidden');
+                fetchPreviousUrls();
+            } catch (error) {
+                errorMessageSpan.textContent = error.message;
+                errorDiv.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('copyButton').addEventListener('click', function() {
+            const shortenedUrlText = shortenedUrlLink.href;
+            navigator.clipboard.writeText(shortenedUrlText).then(() => {
+                alert('Copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Failed to copy URL.');
+            });
+        });
+
+        deleteAllButton.addEventListener('click', async function() {
+            if (confirm('Are you sure you want to delete all shortened links? This action cannot be undone.')) {
+                try {
+                    const response = await fetch('/api/v1/urls', {
+                        method: 'DELETE',
+                    });
+                    if (!response.ok && response.status !== 204) {
+                        const errorData = await response.json().catch(() => ({ detail: 'Failed to delete links.' }));
+                        throw new Error(errorData.detail || 'Failed to delete links');
+                    }
+                    alert('All links have been deleted.');
+                    fetchPreviousUrls();
+                } catch (error) {
+                    console.error('Error deleting all links:', error);
+                    alert('Error: ' + error.message);
+                }
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', fetchPreviousUrls);
+    </script>
+</body>
+</html>
