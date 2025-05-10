@@ -9,13 +9,16 @@ A FastAPI-based URL shortener with DuckDB persistence.
 - Built with FastAPI, DuckDB, and Pydantic
 - Configuration via `.env`
 - Comprehensive unit tests with pytest
+- Rate limiting to prevent abuse
+- Support for Redis-backed distributed rate limiting
 
 ## Repository Structure
 ```
 .
 ├── app
 │   ├── core
-│   │   └── config.py       # Environment settings
+│   │   ├── config.py       # Environment settings
+│   │   └── rate_limiter.py # Rate limiting configuration
 │   ├── db
 │   │   └── session.py      # DuckDB connection & schema setup
 │   ├── models
@@ -58,11 +61,22 @@ A FastAPI-based URL shortener with DuckDB persistence.
    pip install -r requirements.txt
    ```
 4. Configure environment variables  
-   Copy `.env.example` to `.env` (if provided) or create `.env` with:  
+   Copy `.env.example` to `.env`:  
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Then edit `.env` to customize settings. The most important settings are:
    ```
    DATABASE_URL=duckdb:///./data.db
    HOST=127.0.0.1
    PORT=8000
+   RATE_LIMIT_ENABLED=true
+   ```
+   
+   For production environments, configure Redis-backed rate limiting:
+   ```
+   RATE_LIMIT_STORAGE_URI=redis://localhost:6379/0
    ```
 
 ### Running the Application
@@ -99,6 +113,18 @@ To shorten a URL via the command-line tool:
 ### Architecture Overview
 
 ![mermaid-diagram-2025-05-10-132357](https://github.com/user-attachments/assets/6cf99573-893f-4bbb-a426-2c100a16c760)
+
+## Rate Limiting
+
+The URL Shortener implements configurable rate limiting to prevent abuse and ensure service stability:
+
+- IP-based rate limiting for all endpoints
+- Configurable limits per endpoint type
+- Support for in-memory or Redis-backed storage
+- Comprehensive rate limit headers (X-RateLimit-*)
+- Graceful 429 responses with retry information
+
+For detailed information, see [Rate Limiting Documentation](docs/rate_limiting.md).
 
 
 The URL Shortener is structured as a modular, layered system:
