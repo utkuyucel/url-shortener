@@ -1,12 +1,12 @@
 %%{ init: { "theme": "default", "flowchart": { "curve": "linear", "diagramPadding": 10, "htmlLabels": true, "nodeSpacing": 40 }}}%%
 flowchart LR
-    subgraph A[Clients]
+    subgraph A[Presentation Layer / Clients]
         direction TB
         CLI[CLI Client<br><code>shorten.py</code>]:::client
         Web[Web Client / Browser]:::client
     end
 
-    subgraph B[FastAPI Application]
+    subgraph B[Application/Service Layer]
         direction TB
         Main[FastAPI App<br><code>main.py</code>]:::api
         Routers[API Routers<br><code>routers/url.py</code>]:::api
@@ -15,7 +15,7 @@ flowchart LR
         RateLimiter[Rate Limiter<br><code>core/rate_limiter.py</code>]:::service
     end
 
-    subgraph C[Persistence Layer]
+    subgraph C[Data Layer]
         direction TB
         DAL[Data Access Layer<br><code>db/session.py</code>]:::db
         DB[(DuckDB<br><code>data.db</code>)]:::db
