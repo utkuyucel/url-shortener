@@ -46,7 +46,7 @@ A FastAPI-based URL shortener with DuckDB persistence.
 ### Installation
 1. Clone the repository  
    ```bash
-   git clone <repo-url> && cd url-shortener
+   git clone https://github.com/utkuyucel/url-shortener.git && cd url-shortener
    ```
 2. Create and activate a virtual environment  
    ```bash
