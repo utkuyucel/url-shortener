@@ -98,6 +98,9 @@ To shorten a URL via the command-line tool:
 
 ### Architecture Overview
 
+![mermaid-diagram-2025-05-10-132357](https://github.com/user-attachments/assets/6cf99573-893f-4bbb-a426-2c100a16c760)
+
+
 The URL Shortener is structured as a modular, layered system:
 - **API Layer (FastAPI):** Handles HTTP requests, routing, and OpenAPI docs.
 - **Service Layer:** Business logic in `app/services/url_service.py` for generating, retrieving, and updating URLs.
