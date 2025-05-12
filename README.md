@@ -99,4 +99,4 @@ pytest
 IP-based, configurable limits, optional Redis backend. See [Rate Limiting Documentation](docs/rate_limiting.md).
 
 ## License
-MIT License.
+GPL-3.0 license.
