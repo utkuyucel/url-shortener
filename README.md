@@ -83,24 +83,24 @@ pytest
 flowchart LR
     subgraph A[Presentation Layer / Clients]
         direction TB
-        CLI[CLI Client<br><code>shorten.py</code>]:::client
+        CLI[CLI Client<br><code><span style="color:#0066cc">shorten.py</span></code>]:::client
         Web[Web Client / Browser]:::client
     end
 
     subgraph B[Application/Service Layer]
         direction TB
-        Main[FastAPI App<br><code>main.py</code>]:::api
-        Routers[API Routers<br><code>routers/url.py</code>]:::api
-        Service[Service Layer<br><code>url_service.py</code>]:::service
-        Config[Config Loader<br><code>core/config.py</code>]:::config
-        RateLimiter[Rate Limiter<br><code>core/rate_limiter.py</code>]:::service
+        Main[FastAPI App<br><code><span style="color:#0066cc">main.py</span></code>]:::api
+        Routers[API Routers<br><code><span style="color:#0066cc">routers/url.py</span></code>]:::api
+        Service[Service Layer<br><code><span style="color:#0066cc">services/url_service.py</span></code>]:::service
+        Config[Config Loader<br><code><span style="color:#0066cc">core/config.py</span></code>]:::config
+        RateLimiter[Rate Limiter<br><code><span style="color:#0066cc">core/rate_limiter.py</span></code>]:::service
     end
 
     subgraph C[Data Layer]
         direction TB
-        DAL[Data Access Layer<br><code>db/session.py</code>]:::db
-        DB[(DuckDB<br><code>data.db</code>)]:::db
-        URLs["Table: urls<br><small><code>id, original_url, short_path, created_at, visit_count</code></small>"]:::table
+        DAL[Data Access Layer<br><code><span style="color:#0066cc">db/session.py</span></code>]:::db
+        DB[(DuckDB<br><code><span style="color:#0066cc">data.db</span></code>)]:::db
+        URLs["Table: urls<br><small><code><span style="color:#0066cc">id, original_url, short_path, created_at, visit_count</span></code></small>"]:::table
     end
 
     subgraph D[Optional External Services]
